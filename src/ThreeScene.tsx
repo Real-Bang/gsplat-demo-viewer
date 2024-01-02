@@ -49,9 +49,9 @@ export default function ThreeScene({ src }: { src: string }) {
       newControls.screenSpacePanning = true;
       newControls.update();
 
-      let light = new THREE.PointLight(0xffffff, 100); //조명
-      light.position.copy(new THREE.Vector3().fromArray([0, 0, 0]));
-      scene.add(light);
+      // let light = new THREE.PointLight(0xffffff, 100); //조명
+      // light.position.copy(new THREE.Vector3().fromArray([0, 0, 0]));
+      // scene.add(light);
 
       if (src.match(/obj$/)) {
         const loader = new OBJLoader();
@@ -100,6 +100,11 @@ export default function ThreeScene({ src }: { src: string }) {
         loader.load(
           src,
           function (gltf) {
+            gltf.scene.traverse((obj) => {
+              if (obj instanceof THREE.Mesh) {
+                obj.material = new THREE.MeshBasicMaterial().copy(obj.material);
+              }
+            });
             scene.add(gltf.scene);
             setIsReady(true);
           },
